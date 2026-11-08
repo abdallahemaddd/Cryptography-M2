@@ -1,0 +1,51 @@
+from des import process_block, round_keys, decrypt, encrypt
+
+print("DES 16-Round Demonstration")
+print("-" * 45)
+
+plaintext = bytes.fromhex("0123456789ABCDEF")
+key = bytes.fromhex("133457799BBCDFF1")
+
+expected = "85E813540F0AB405"
+
+print("Plaintext:", plaintext.hex().upper())
+print("Key:", key.hex().upper())
+print()
+
+keys = round_keys(key)
+
+ciphertext = process_block(
+    plaintext,
+    keys,
+    trace=True
+)
+
+print()
+print("Expected ciphertext:", expected)
+print("Actual ciphertext:  ", ciphertext.hex().upper())
+print("Verification:", ciphertext.hex().upper() == expected)
+
+decrypted = process_block(
+    ciphertext,
+    keys[::-1]
+)
+
+print("Decryption successful:", decrypted == plaintext)
+
+print("\nECB Pattern Demonstration")
+print("-" * 45)
+
+message = b"PAY10000PAY10000"
+shared_key = b"12345678"
+
+encrypted = encrypt(message, shared_key)
+
+block1 = encrypted[:8].hex()
+block2 = encrypted[8:16].hex()
+
+print("Plaintext block 1:", message[:8].decode())
+print("Plaintext block 2:", message[8:16].decode())
+print("Ciphertext block 1:", block1)
+print("Ciphertext block 2:", block2)
+print("Blocks are identical:", block1 == block2)
+print("Decrypted message:", decrypt(encrypted, shared_key).decode())
